@@ -1,73 +1,95 @@
-# React + TypeScript + Vite
+# 📊 Analytic System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Интерактивное приложение для управления задачами с аналитикой.  
+Проект демонстрирует навыки работы с состоянием, таблицами, архитектурой и визуализацией данных.
 
-Currently, two official plugins are available:
+Основной фокус — построение масштабируемой структуры, управление состоянием через Zustand и работа с UI + аналитикой.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Демо
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+👉 https://dashboard-cyan-eight-70.vercel.app/
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## ⚙️ Стек
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React  
+- TypeScript  
+- Zustand  
+- React Router  
+- Chart.js  
+- CSS  
+- Vite  
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🧠 Архитектура проекта
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Проект организован по принципам **Feature-Sliced Design (FSD)**:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `app/` — инициализация приложения  
+- `pages/` — страницы (Dashboard, Analytics)  
+- `widgets/` — крупные UI-блоки (Layout, Table, Charts, Filters)  
+- `entities/` — бизнес-сущности (Task, store, модели)  
+- `shared/` — переиспользуемые утилиты и стили  
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Подход позволяет:
+
+- изолировать бизнес-логику  
+- переиспользовать компоненты  
+- упростить масштабирование проекта  
+
+---
+
+## ⚡ Основной функционал
+
+- управление задачами (добавление, удаление)  
+- изменение статуса (Todo / In Progress / Done)  
+- приоритеты задач (Low / Medium / High)  
+- фильтрация задач  
+- пагинация  
+- аналитика задач (графики)  
+- роутинг между страницами  
+- сохранение состояния (persist)  
+
+---
+
+## 📊 Аналитика
+
+На странице Analytics реализовано:
+
+- круговая диаграмма по статусам задач  
+- круговая диаграмма по приоритетам  
+- таблица задач с пагинацией  
+
+---
+
+## 💣 Ключевые решения
+
+- Использование Zustand для управления состоянием  
+- Разделение логики по FSD-архитектуре  
+- Использование Chart.js для визуализации данных  
+- Реализация пагинации на клиенте  
+- Использование React Router для SPA-навигации  
+
+---
+
+## 📈 Возможные улучшения
+
+- 🔎 поиск задач  
+- ⏳ debounce для поиска  
+- 🔄 loading / error состояния (работа с API)  
+- 📊 дополнительные графики (bar / line)  
+- ✏️ редактирование задач  
+- 🌙 темная тема  
+- 🔗 интеграция с backend  
+
+---
+
+## 🛠️ Установка и запуск
+
+```bash
+npm install
+npm run dev
