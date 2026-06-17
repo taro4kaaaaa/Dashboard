@@ -73,6 +73,34 @@ app.delete("/services/:id", async (req, res) => {
   }
 });
 
+app.patch("/services/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const tasks = JSON.parse(
+      (await redisClient.get("tasks")) || "[]"
+    );
+    const updatedTasks = tasks.map((task) =>
+      task.id === id
+        ? { ...task, status }
+        : task
+    );
+    await redisClient.set(
+      "tasks",
+      JSON.stringify(updatedTasks)
+    );
+    const updatedTask = updatedTasks.find(
+      (task) => task.id === id
+    );
+    res.json(updatedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to update task",
+    });
+  }
+});
+
 async function start() {
   try {
     await redisClient.connect();
