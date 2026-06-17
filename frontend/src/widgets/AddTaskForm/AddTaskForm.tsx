@@ -1,27 +1,34 @@
 import { useState } from "react";
-import { useTaskStore } from "@/entities/task/model/store";
+import { tasksApi } from "@/api/tasksApi";
 
 export const AddTaskForm = () => {
-  const addTask = useTaskStore((state) => state.addTask);
-
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("low");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) return;
 
-    addTask({
+    const newTask = {
       id: Date.now().toString(),
       title,
-      status: "todo",
+      status: "todo" as const,
       priority,
       createdAt: new Date().toISOString(),
-    });
+    };
 
-    setTitle("");
-    setPriority("low");
+    try {
+      await tasksApi.create(newTask);
+
+      setTitle("");
+      setPriority("low");
+
+      // временно обновляем страницу
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    }
   };
 
   return (
@@ -36,7 +43,7 @@ export const AddTaskForm = () => {
       <select
         value={priority}
         onChange={(e) =>
-        setPriority(e.target.value as "low" | "medium" | "high")
+          setPriority(e.target.value as "low" | "medium" | "high")
         }
       >
         <option value="low">Low</option>

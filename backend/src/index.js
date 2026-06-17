@@ -28,6 +28,51 @@ app.get("/services", async (req, res) => {
   }
 });
 
+app.post("/services", async (req, res) => {
+  try {
+    const newTask = req.body;
+    const tasks = JSON.parse(
+      (await redisClient.get("tasks")) || "[]"
+    );
+    tasks.push(newTask);
+    await redisClient.set(
+      "tasks",
+      JSON.stringify(tasks)
+    );
+    res.status(201).json(newTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to create task",
+    });
+  }
+});
+
+app.delete("/services/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const tasks = JSON.parse(
+      (await redisClient.get("tasks")) || "[]"
+    );
+    const filteredTasks = tasks.filter(
+      (task) => task && task.id !== id
+    );
+    await redisClient.set(
+      "tasks",
+      JSON.stringify(filteredTasks)
+    );
+    res.json({
+      success: true,
+      deletedId: id,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to delete task",
+    });
+  }
+});
+
 async function start() {
   try {
     await redisClient.connect();
