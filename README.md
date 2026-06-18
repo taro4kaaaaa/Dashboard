@@ -1,49 +1,49 @@
-🚀 DevOps Dashboard
+# 🚀 DevOps Dashboard
 
-DevOps Dashboard — контейнеризированное веб-приложение для управления инфраструктурными задачами и мониторинга сервисов.
+Контейнеризированное веб-приложение для управления инфраструктурными задачами и мониторинга сервисов.
 
-Проект демонстрирует практические навыки работы с Docker, Docker Compose, Redis, CI/CD и GitHub Actions.
+Проект демонстрирует практические навыки работы с Docker, Docker Compose, Redis, GitHub Actions и построения CI-пайплайнов.
 
-⸻
+---
 
-🌐 Demo
+## 🌐 Live Demo
 
-Frontend:
-https://dashboard-cyan-eight-70.vercel.app
+👉 https://dashboard-cyan-eight-70.vercel.app
 
-⸻
+---
 
-📸 Screenshots
+## 📸 Screenshots
 
-Dashboard
+### 🏡 Dashboard
 
 <img src="./frontend/public/dashboard.gif" width="700"/>
 
-Управление инфраструктурными задачами:
+Управление задачами:
 
-* создание задач
-* изменение статуса
-* изменение приоритета
-* удаление задач
-* хранение данных через REST API
+- создание задач
+- изменение статуса
+- изменение приоритета
+- удаление задач
+- синхронизация с backend API
 
-⸻
+---
 
-Analytics
+### 📊 Analytics
 
 <img src="./frontend/public/analytic.png" width="700"/>
 
-Визуализация метрик задач:
+Раздел аналитики содержит:
 
-* распределение по статусам
-* распределение по приоритетам
-* аналитические графики
-* сводная статистика
+- распределение задач по статусам
+- распределение задач по приоритетам
+- визуализацию текущего состояния системы
+- сводную статистику
 
-⸻
+---
 
-🏗 Architecture
+## 🏗 Architecture
 
+```text
 Frontend (React)
         │
         ▼
@@ -51,135 +51,233 @@ Backend API (Node.js / Express)
         │
         ▼
 Redis
+```
 
-Контейнеризация:
+Контейнеризированная инфраструктура:
 
+```text
 Docker Compose
 ├── frontend
 ├── backend
 └── redis
+```
 
-⸻
+---
 
-✨ Features
+## ✨ Features
 
-Task Management
+### Task Management
 
-* Create Task
-* Delete Task
-* Update Status
-* Update Priority
+- Create Task
+- Delete Task
+- Update Status
+- Update Priority
 
-REST API
+### REST API
 
-Backend реализует:
+Backend реализует следующие endpoints:
 
+```http
 GET    /services
 POST   /services
 PATCH  /services/:id
 DELETE /services/:id
+```
 
-Redis Storage
+### Redis Storage
 
 Все задачи хранятся в Redis.
 
-При запуске приложения выполняется инициализация данных.
+При старте приложения происходит автоматическая инициализация данных.
 
-Analytics
+### Analytics
 
-Реализована визуализация:
+Визуализация:
 
-* Todo Tasks
-* In Progress Tasks
-* Done Tasks
-* Priority Distribution
+- Todo Tasks
+- In Progress Tasks
+- Done Tasks
+- Priority Distribution
 
-Containerization
+### Containerization
 
 Проект полностью контейнеризирован:
 
-* Docker
-* Docker Compose
-* Multi-container architecture
+- Docker
+- Docker Compose
+- Multi-container architecture
 
-⸻
+---
 
-⚙️ CI/CD
+## ⚙️ CI Pipeline
 
 Настроен CI Pipeline на GitHub Actions.
 
 При каждом push выполняется:
 
+```text
 Git Push
     │
     ▼
 GitHub Actions
     │
     ├── Frontend Build
-    ├── Backend Build
+    ├── Backend Validation
     └── Docker Image Build
+```
 
 Pipeline автоматически проверяет:
 
-* корректность сборки frontend
-* корректность сборки backend
-* успешную сборку Docker-образов
+- корректность сборки frontend
+- корректность сборки backend
+- успешную сборку Docker-образов
 
-⸻
+---
 
-🛠 Tech Stack
+## 🛠 Tech Stack
 
-Frontend
+### Frontend
 
-* React
-* TypeScript
-* Zustand
-* React Router
-* Recharts
+- React
+- TypeScript
+- Zustand
+- React Router
+- Recharts
+- CSS
 
-Backend
+### Backend
 
-* Node.js
-* Express
+- Node.js
+- Express
 
-Infrastructure
+### Database & Cache
 
-* Docker
-* Docker Compose
-* Redis
+- Redis
 
-CI/CD
+### Infrastructure
 
-* GitHub Actions
+- Docker
+- Docker Compose
 
-⸻
+### CI/CD
 
-🚀 Run Locally
+- GitHub Actions
 
-Clone repository:
+---
 
+## 📂 Project Structure
+
+```text
+Dashboard/
+├── frontend/
+│   ├── src/
+│   ├── Dockerfile
+│   └── package.json
+│
+├── backend/
+│   ├── src/
+│   ├── Dockerfile
+│   └── package.json
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+## 🚀 Quick Start
+
+### Clone Repository
+
+```bash
 git clone https://github.com/taro4kaaaaa/Dashboard.git
 cd Dashboard
+```
 
-Run application:
+### Run Application
 
+```bash
 docker compose up --build
+```
 
-Available services:
+### Available Services
 
-Frontend → http://localhost:5173
+```text
+Frontend  → http://localhost:5173
+
 Backend API → http://localhost:3000/services
+
 Redis → localhost:6379
+```
 
-⸻
+### Stop Containers
 
-📈 DevOps Skills Demonstrated
+```bash
+docker compose down
+```
 
-* Containerization with Docker
-* Multi-container applications
-* Docker Compose orchestration
-* Redis integration
-* REST API development
-* CI pipelines with GitHub Actions
-* Automated Docker image validation
-* Infrastructure-oriented project architecture
+---
+
+## 🔍 Redis Verification
+
+Подключиться к Redis:
+
+```bash
+docker exec -it dashboard-redis-1 redis-cli
+```
+
+Посмотреть ключи:
+
+```bash
+KEYS *
+```
+
+Получить данные задач:
+
+```bash
+GET tasks
+```
+
+---
+
+## 📈 DevOps Skills Demonstrated
+
+- Docker Containerization
+- Docker Compose Orchestration
+- Redis Integration
+- REST API Development
+- Multi-Container Applications
+- GitHub Actions CI Pipeline
+- Automated Docker Image Validation
+- Infrastructure-Oriented Application Architecture
+- Client-Server Communication
+- Linux-Based Development Environment
+
+---
+
+## 🔄 Current CI Workflow
+
+Текущий pipeline автоматически запускается при каждом push в репозиторий и выполняет:
+
+1. Frontend Build
+2. Backend Validation
+3. Docker Image Build
+4. Build Verification
+
+Это гарантирует, что приложение и контейнеры успешно собираются перед дальнейшим деплоем.
+
+---
+
+## 🎯 Future Improvements
+
+- Docker Hub Image Publishing
+- Automated Deployment
+- Nginx Reverse Proxy
+- Environment Variables Management
+- Health Checks
+- Monitoring & Logging
+- Kubernetes Deployment
