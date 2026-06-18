@@ -1,70 +1,185 @@
-# 🚀 Analytic System
+🚀 DevOps Dashboard
 
-Dashboard-приложение для управления задачами с аналитикой и визуализацией данных.
+DevOps Dashboard — контейнеризированное веб-приложение для управления инфраструктурными задачами и мониторинга сервисов.
 
----
+Проект демонстрирует практические навыки работы с Docker, Docker Compose, Redis, CI/CD и GitHub Actions.
 
-## 🌐 Live Demo
-👉 https://dashboard-cyan-eight-70.vercel.app
+⸻
 
----
+🌐 Demo
 
-## 📸 Screenshots
+Frontend:
+https://dashboard-cyan-eight-70.vercel.app
 
-### 🏡 Информационная панель
-<img src="./frontend/public/dashboard.gif" width="400"/>
-<p>Главная панель Dashboard с управлением задачами: добавление новых задач, назначение приоритета и статуса, удаление задач.</p>
+⸻
 
-### 📊 Аналитика задач
-<img src="./frontend/public/analytic.png" width="400"/>
-<p>Раздел аналитики задач с интерактивными диаграммами и сводкой по всем задачам. Реализована пагинация для списка задач, фильтрация и визуализация прогресса по статусам и приоритетам.
-</p>
+📸 Screenshots
 
----
+Dashboard
 
-## ✨ Key Features & Value
+<img src="./frontend/public/dashboard.gif" width="700"/>
 
-- 📂 **Управление задачами**
-  Главная панель Dashboard позволяет создавать и удалять задачи, назначать приоритет (low/medium/high) и менять статус (todo/in-progress/done). Все действия мгновенно отражаются в интерфейсе.
+Управление инфраструктурными задачами:
 
-- 🌍 **Фильтрация и пагинация**
-  Список задач масштабируемый: можно фильтровать по статусу и приоритету, реализована пагинация для удобного просмотра большого количества задач.
+* создание задач
+* изменение статуса
+* изменение приоритета
+* удаление задач
+* хранение данных через REST API
 
-- 📊 **Аналитика задач**
-  Раздел Analytics содержит диаграммы с визуализацией прогресса задач по статусам и приоритетам, обновляется динамически.
+⸻
 
-- ⚡ **Persist / Производительность**
-  Данные задач сохраняются через Zustand и localStorage, что позволяет сохранять состояние между сессиями и обеспечивать быструю работу интерфейса.
+Analytics
 
----
+<img src="./frontend/public/analytic.png" width="700"/>
 
-## 🧩 Technical Decisions & Challenges
+Визуализация метрик задач:
 
-- **Почему Zustand + localStorage:** проект фронтенд-ориентированный без бекенда. Zustand обеспечивает удобное управление состоянием, localStorage сохраняет данные между сессиями.
+* распределение по статусам
+* распределение по приоритетам
+* аналитические графики
+* сводная статистика
 
-- **Фильтрация и пагинация:** реализованы локально через Zustand, интерфейс остается отзывчивым даже при большом количестве задач.
+⸻
 
-- **Аналитика и графики:** использован Chart.js для построения диаграмм — выбран за простоту интеграции и интерактивность.
+🏗 Architecture
 
-- **Главный вызов:** объединить управление задачами, фильтрацию, пагинацию и аналитические графики без потери производительности и отзывчивости интерфейса.
+Frontend (React)
+        │
+        ▼
+Backend API (Node.js / Express)
+        │
+        ▼
+Redis
 
----
+Контейнеризация:
 
-## 🛠 Tech Stack
+Docker Compose
+├── frontend
+├── backend
+└── redis
 
-- React
-- TypeScript
-- Zustand (state management)
-- React Router
-- Chart.js
-- CSS
+⸻
 
----
+✨ Features
 
-## ⚙️ Installation
+Task Management
 
-```bash
+* Create Task
+* Delete Task
+* Update Status
+* Update Priority
+
+REST API
+
+Backend реализует:
+
+GET    /services
+POST   /services
+PATCH  /services/:id
+DELETE /services/:id
+
+Redis Storage
+
+Все задачи хранятся в Redis.
+
+При запуске приложения выполняется инициализация данных.
+
+Analytics
+
+Реализована визуализация:
+
+* Todo Tasks
+* In Progress Tasks
+* Done Tasks
+* Priority Distribution
+
+Containerization
+
+Проект полностью контейнеризирован:
+
+* Docker
+* Docker Compose
+* Multi-container architecture
+
+⸻
+
+⚙️ CI/CD
+
+Настроен CI Pipeline на GitHub Actions.
+
+При каждом push выполняется:
+
+Git Push
+    │
+    ▼
+GitHub Actions
+    │
+    ├── Frontend Build
+    ├── Backend Build
+    └── Docker Image Build
+
+Pipeline автоматически проверяет:
+
+* корректность сборки frontend
+* корректность сборки backend
+* успешную сборку Docker-образов
+
+⸻
+
+🛠 Tech Stack
+
+Frontend
+
+* React
+* TypeScript
+* Zustand
+* React Router
+* Recharts
+
+Backend
+
+* Node.js
+* Express
+
+Infrastructure
+
+* Docker
+* Docker Compose
+* Redis
+
+CI/CD
+
+* GitHub Actions
+
+⸻
+
+🚀 Run Locally
+
+Clone repository:
+
 git clone https://github.com/taro4kaaaaa/Dashboard.git
 cd Dashboard
-npm install
-npm run dev
+
+Run application:
+
+docker compose up --build
+
+Available services:
+
+Frontend → http://localhost:5173
+Backend API → http://localhost:3000/services
+Redis → localhost:6379
+
+⸻
+
+📈 DevOps Skills Demonstrated
+
+* Containerization with Docker
+* Multi-container applications
+* Docker Compose orchestration
+* Redis integration
+* REST API development
+* CI pipelines with GitHub Actions
+* Automated Docker image validation
+* Infrastructure-oriented project architecture
