@@ -19,7 +19,7 @@
 ```text
 ┌──────────┐      ┌──────────────┐      ┌───────┐
 │ Frontend │ ───▶ │ Backend API  │ ───▶ │ Redis │
-│ (React)  │      │ (Node/Express)│      │       │
+│ (React)  │      │ (Node/Express)│     │       │
 └──────────┘      └──────┬───────┘      └───────┘
                           │
                           │ /metrics
