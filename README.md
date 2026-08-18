@@ -1,8 +1,8 @@
-# 🚀 DevOps Dashboard
+# 🚀 Dashboard — Infrastructure & Observability Project
 
-Контейнеризированное веб-приложение для управления инфраструктурными задачами и мониторинга сервисов.
+Контейнеризированное клиент-серверное приложение, спроектированное как инфраструктурный pet-проект: multi-container оркестрация, CI-пайплайн и полноценный observability-стек (метрики, дашборды, алертинг).
 
-Проект демонстрирует практические навыки работы с Docker, Docker Compose, Redis, GitHub Actions и построения CI-пайплайнов.
+Приложение (таск-менеджер) — прикладной слой, на котором демонстрируется инфраструктурная часть: Docker Compose, сетевое взаимодействие сервисов, CI/CD и мониторинг.
 
 ---
 
@@ -10,110 +10,95 @@
 
 👉 https://dashboard-cyan-eight-70.vercel.app
 
----
-
-## 📸 Screenshots
-
-### 🏡 Dashboard
-
 <img src="./frontend/public/dashboard.gif" width="700"/>
-
-Управление задачами:
-
-- создание задач
-- изменение статуса
-- изменение приоритета
-- удаление задач
-- синхронизация с backend API
-
----
-
-### 📊 Analytics
-
-<img src="./frontend/public/analytic.png" width="700"/>
-
-Раздел аналитики содержит:
-
-- распределение задач по статусам
-- распределение задач по приоритетам
-- визуализацию текущего состояния системы
-- сводную статистику
 
 ---
 
 ## 🏗 Architecture
 
 ```text
-Frontend (React)
-        │
-        ▼
-Backend API (Node.js / Express)
-        │
-        ▼
-Redis
+┌──────────┐      ┌──────────────┐      ┌───────┐
+│ Frontend │ ───▶ │ Backend API  │ ───▶ │ Redis │
+│ (React)  │      │ (Node/Express)│      │       │
+└──────────┘      └──────┬───────┘      └───────┘
+                          │
+                          │ /metrics
+                          ▼
+                   ┌─────────────┐
+                   │ Prometheus  │◀────── node-exporter
+                   └──────┬──────┘◀────── redis-exporter
+                          │
+              ┌───────────┴───────────┐
+              ▼                       ▼
+        ┌───────────┐          ┌─────────────┐
+        │  Grafana  │          │ Alertmanager│
+        └───────────┘          └─────────────┘
 ```
 
-Контейнеризированная инфраструктура:
+Вся инфраструктура поднимается одной командой через Docker Compose — 8 контейнеров, объединённых в единую сеть.
+
+---
+
+## 📦 Infrastructure Stack
 
 ```text
-Docker Compose
-├── frontend
-├── backend
-└── redis
+Orchestration   → Docker Compose (multi-container)
+Metrics         → Prometheus
+Visualization   → Grafana (Dashboard as Code)
+Alerting        → Alertmanager
+Exporters       → node-exporter, redis-exporter
+Custom metrics  → prom-client (Express middleware)
+CI              → GitHub Actions
 ```
 
 ---
 
-## ✨ Features
+## 📊 Observability
 
-### Task Management
+### Что собирается
 
-- Create Task
-- Delete Task
-- Update Status
-- Update Priority
+| Источник | Метрики |
+|---|---|
+| Backend (custom) | `http_requests_total`, `http_request_duration_seconds` (RPS, латентность по методу/роуту/статус-коду) |
+| Backend (default) | CPU, память, event loop lag, GC (Node.js runtime) |
+| node-exporter | Метрики хоста (CPU, память, диск, сеть) |
+| redis-exporter | Подключённые клиенты, использование памяти Redis |
 
-### REST API
+### Dashboard
 
-Backend реализует следующие endpoints:
+Дашборд в Grafana с ключевыми SLI сервиса:
 
-```http
-GET    /services
-POST   /services
-PATCH  /services/:id
-DELETE /services/:id
+- RPS
+- Latency p95
+- Node.js memory usage
+- Redis connected clients
+
+Конфигурация дашборда хранится как JSON в `monitoring/grafana/dashboards/` и провижинится автоматически при `docker compose up` — без ручного импорта через UI (Dashboard as Code).
+
+<img src="./monitoring/screenshots/dashboard.png" width="700"/>
+
+### Alerting
+
+Правила в `monitoring/alert.rules.yml`, обрабатываются Alertmanager:
+
+| Alert | Условие |
+|---|---|
+| `BackendDown` | `up{job="backend"} == 0` дольше 1 минуты |
+| `HighErrorRate` | доля 5xx-ответов выше 5% за 5 минут |
+
+### Доступ к сервисам мониторинга
+
+```text
+Prometheus    → http://localhost:9090
+Grafana       → http://localhost:3001   (admin / admin)
+Alertmanager  → http://localhost:9093
 ```
-
-### Redis Storage
-
-Все задачи хранятся в Redis.
-
-При старте приложения происходит автоматическая инициализация данных.
-
-### Analytics
-
-Визуализация:
-
-- Todo Tasks
-- In Progress Tasks
-- Done Tasks
-- Priority Distribution
-
-### Containerization
-
-Проект полностью контейнеризирован:
-
-- Docker
-- Docker Compose
-- Multi-container architecture
 
 ---
 
 ## ⚙️ CI Pipeline
 
-Настроен CI Pipeline на GitHub Actions.
-
-При каждом push выполняется:
+GitHub Actions запускается при каждом push:
 
 ```text
 Git Push
@@ -126,42 +111,32 @@ GitHub Actions
     └── Docker Image Build
 ```
 
-Pipeline автоматически проверяет:
+Pipeline проверяет корректность сборки frontend, backend и Docker-образов перед деплоем.
 
-- корректность сборки frontend
-- корректность сборки backend
-- успешную сборку Docker-образов
+---
+
+## ✨ Application Features
+
+Поверх инфраструктуры развёрнуто приложение управления задачами:
+
+- Создание / изменение / удаление задач
+- Изменение статуса и приоритета
+- Аналитика: распределение задач по статусам и приоритетам
+- REST API (`GET/POST/PATCH/DELETE /services`)
+- Хранение состояния в Redis с автоинициализацией при старте
 
 ---
 
 ## 🛠 Tech Stack
 
-### Frontend
+**Infrastructure & DevOps**
+Docker, Docker Compose, Prometheus, Grafana, Alertmanager, GitHub Actions, Linux
 
-- React
-- TypeScript
-- Zustand
-- React Router
-- Recharts
-- CSS
+**Backend**
+Node.js, Express, prom-client, Redis
 
-### Backend
-
-- Node.js
-- Express
-
-### Database & Cache
-
-- Redis
-
-### Infrastructure
-
-- Docker
-- Docker Compose
-
-### CI/CD
-
-- GitHub Actions
+**Frontend**
+React, TypeScript, Zustand, React Router, Recharts
 
 ---
 
@@ -179,6 +154,19 @@ Dashboard/
 │   ├── Dockerfile
 │   └── package.json
 │
+├── monitoring/
+│   ├── prometheus.yml
+│   ├── alert.rules.yml
+│   ├── alertmanager.yml
+│   ├── screenshots/
+│   │   └── dashboard.png
+│   └── grafana/
+│       ├── provisioning/
+│       │   └── dashboards/
+│       │       └── dashboard.yml
+│       └── dashboards/
+│           └── dashboard-api-overview.json
+│
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
@@ -191,30 +179,24 @@ Dashboard/
 
 ## 🚀 Quick Start
 
-### Clone Repository
-
 ```bash
 git clone https://github.com/taro4kaaaaa/Dashboard.git
 cd Dashboard
-```
-
-### Run Application
-
-```bash
 docker compose up --build
 ```
 
 ### Available Services
 
 ```text
-Frontend  → http://localhost:5173
-
-Backend API → http://localhost:3000/services
-
-Redis → localhost:6379
+Frontend      → http://localhost:5173
+Backend API   → http://localhost:3000/services
+Redis         → localhost:6379
+Prometheus    → http://localhost:9090
+Grafana       → http://localhost:3001
+Alertmanager  → http://localhost:9093
 ```
 
-### Stop Containers
+### Stop
 
 ```bash
 docker compose down
@@ -222,52 +204,16 @@ docker compose down
 
 ---
 
-## 🔍 Redis Verification
 
-Подключиться к Redis:
-
-```bash
-docker exec -it dashboard-redis-1 redis-cli
-```
-
-Посмотреть ключи:
-
-```bash
-KEYS *
-```
-
-Получить данные задач:
-
-```bash
-GET tasks
-```
-
----
 
 ## 📈 DevOps Skills Demonstrated
 
-- Docker Containerization
-- Docker Compose Orchestration
-- Redis Integration
-- REST API Development
-- Multi-Container Applications
+- Docker & Docker Compose (multi-container orchestration)
+- Observability: Prometheus + Grafana + Alertmanager
+- Custom application metrics (prom-client, Express middleware)
+- Dashboard as Code (версионируемые JSON-дашборды с автопровижинингом)
+- Alerting rules (availability, error rate)
 - GitHub Actions CI Pipeline
-- Automated Docker Image Validation
-- Infrastructure-Oriented Application Architecture
-- Client-Server Communication
-- Linux-Based Development Environment
-
----
-
-## 🔄 Current CI Workflow
-
-Текущий pipeline автоматически запускается при каждом push в репозиторий и выполняет:
-
-1. Frontend Build
-2. Backend Validation
-3. Docker Image Build
-4. Build Verification
-
-Это гарантирует, что приложение и контейнеры успешно собираются перед дальнейшим деплоем.
-
----
+- REST API design
+- Redis integration
+- Linux-based development environment
