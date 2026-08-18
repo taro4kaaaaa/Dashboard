@@ -271,13 +271,3 @@ GET tasks
 Это гарантирует, что приложение и контейнеры успешно собираются перед дальнейшим деплоем.
 
 ---
-
-## 🎯 Future Improvements
-
-- Docker Hub Image Publishing
-- Automated Deployment
-- Nginx Reverse Proxy
-- Environment Variables Management
-- Health Checks
-- Monitoring & Logging
-- Kubernetes Deployment
